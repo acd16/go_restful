@@ -61,6 +61,8 @@ func CreateDictKey(w http.ResponseWriter, req *http.Request) {
 func DeleteDictKey(w http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
 	delete(data, params["key"])
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
 }
 
 func UpdateDictKey(w http.ResponseWriter, req *http.Request) {
