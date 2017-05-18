@@ -1,6 +1,6 @@
 //client for simple REST server
 
-//TODO:add flags 
+//TODO:add flags
 //	   report errors from server
 package main
 
@@ -8,8 +8,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"io"
+	"net/http"
 	"os"
 	"strings"
 )
@@ -98,21 +98,21 @@ func deleteKey(key string) {
 }
 
 func updateKey(key, value string) {
-	reqStr := "{\"key\":"+key+", \"value\":"+value+"}"
-	body := strings.NewReader(reqStr) 
-	req, err := http.NewRequest("PUT", "http://localhost:8080/v1/dict/update/", body) 
-	if err != nil { 
+	reqStr := "{\"key\":" + key + ", \"value\":" + value + "}"
+	body := strings.NewReader(reqStr)
+	req, err := http.NewRequest("PUT", "http://localhost:8080/v1/dict/update/", body)
+	if err != nil {
 		panic(err)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("charset", "UTF-8")
 
-	resp, err := http.DefaultClient.Do(req) 
+	resp, err := http.DefaultClient.Do(req)
 	defer resp.Body.Close()
-	if err != nil { 
+	if err != nil {
 		panic(err)
-	} 
+	}
 }
 
 func main() {
