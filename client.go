@@ -20,6 +20,7 @@ type Dict struct {
 	Value string `json:"value"`
 }
 
+//Get a specific key based on provided key
 func getKey(key string) {
 	reqStr := "http://localhost:8080/v1/dict/" + key
 	req, err := http.NewRequest("GET", reqStr, nil)
@@ -45,6 +46,7 @@ func getKey(key string) {
 	fmt.Println(string(res))
 }
 
+//add a key, value pair
 func createKey(key, value string) {
 	data := Dict{Key: key, Value: value}
 	dataBytes, err := json.Marshal(data)
@@ -70,6 +72,7 @@ func createKey(key, value string) {
 	return
 }
 
+//List all keys
 func getAllKeys() {
 	resp, err := http.Get("http://localhost:8080/v1/dict/")
 	defer resp.Body.Close()
@@ -83,6 +86,7 @@ func getAllKeys() {
 	}
 }
 
+//Delete specific key
 func deleteKey(key string) {
 	reqStr := "http://localhost:8080/v1/dict/delete/" + key
 	req, err := http.NewRequest("DELETE", reqStr, nil)
@@ -99,7 +103,7 @@ func deleteKey(key string) {
 }
 
 func updateKey(key, value string) {
-	reqStr := "{\"key\":" + key + ", \"value\":" + value + "}"
+	reqStr := "{\"key\":\"" + key + "\", \"value\":\"" + value + "\"}"
 	body := strings.NewReader(reqStr)
 	req, err := http.NewRequest("PUT", "http://localhost:8080/v1/dict/update/", body)
 	if err != nil {
@@ -117,7 +121,6 @@ func updateKey(key, value string) {
 }
 
 func main() {
-	fmt.Println("im in")
 	//add, update, delete, get, getall
 	addPtr := flag.String("add", "", "key,value to be added")
 	updatePtr := flag.String("update", "", "key,value to be updated")
@@ -125,11 +128,10 @@ func main() {
 	getPtr := flag.String("get", "", "key to retrieve")
 	getAllPtr := flag.Bool("getAll", false, "get all keys")
 
-	fmt.Printf("%s\n", *addPtr)
+	flag.Parse()
 
 	if *addPtr != "" {
 		s := strings.Split(*addPtr, ",")
-		fmt.Println(s[0], s[1])
 		createKey(s[0], s[1])
 	}
 
@@ -149,12 +151,4 @@ func main() {
 	if *getAllPtr == true {
 		getAllKeys()
 	}
-	//getKey("foo")
-	//createKey("abc", "def")
-	//getKey("abc")
-	//getAllKeys()
-	//deleteKey("foo")
-	//getAllKeys()
-	//updateKey("abc", "deg")
-	//getAllKeys()
 }
