@@ -35,3 +35,14 @@ test#./client -getAll
 Status: 200 OK
 [{"key":"foo","value":"bar"}]
 test#
+
+References:
+
+https://golang.org/pkg/net/http/
+https://golang.org/pkg/encoding/json/
+http://www.gorillatoolkit.org/pkg/mux#api
+https://www.easypost.com/docs/api.html
+https://www.thepolyglotdeveloper.com/2016/07/create-a-simple-restful-api-with-golang/
+https://gobyexample.com/
+https://mholt.github.io/curl-to-go/
+www.stackoverflow.com
