@@ -7,6 +7,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"net/http"
@@ -116,12 +117,44 @@ func updateKey(key, value string) {
 }
 
 func main() {
-	getKey("foo")
-	createKey("abc", "def")
-	getKey("abc")
-	getAllKeys()
-	deleteKey("foo")
-	getAllKeys()
-	updateKey("abc", "deg")
-	getAllKeys()
+	fmt.Println("im in")
+	//add, update, delete, get, getall
+	addPtr := flag.String("add", "", "key,value to be added")
+	updatePtr := flag.String("update", "", "key,value to be updated")
+	deletePtr := flag.String("delete", "", "key to be deleted")
+	getPtr := flag.String("get", "", "key to retrieve")
+	getAllPtr := flag.Bool("getAll", false, "get all keys")
+
+	fmt.Printf("%s\n", *addPtr)
+
+	if *addPtr != "" {
+		s := strings.Split(*addPtr, ",")
+		fmt.Println(s[0], s[1])
+		createKey(s[0], s[1])
+	}
+
+	if *updatePtr != "" {
+		s := strings.Split(*updatePtr, ",")
+		updateKey(s[0], s[1])
+	}
+
+	if *deletePtr != "" {
+		deleteKey(*deletePtr)
+	}
+
+	if *getPtr != "" {
+		getKey(*getPtr)
+	}
+
+	if *getAllPtr == true {
+		getAllKeys()
+	}
+	//getKey("foo")
+	//createKey("abc", "def")
+	//getKey("abc")
+	//getAllKeys()
+	//deleteKey("foo")
+	//getAllKeys()
+	//updateKey("abc", "deg")
+	//getAllKeys()
 }
