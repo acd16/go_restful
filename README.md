@@ -7,8 +7,19 @@ Build client: go build client.go types.go
 
 server runs on port 8080 and the client assumes the server is on local host. 
 
+# Usage of ./client:
+  -add string
+        key,value to be added
+  -delete string
+        key to be deleted
+  -get string
+        key to retrieve
+  -getAll
+        get all keys
+  -update string
+        key,value to be updated
 
-Sample client run:
+# Sample client run:
 
 test#./client -add="foo,bar"
 Status: 201 Created
@@ -36,7 +47,7 @@ Status: 200 OK
 [{"key":"foo","value":"bar"}]
 test#
 
-References:
+# References:
 
 https://golang.org/pkg/net/http/
 https://golang.org/pkg/encoding/json/
