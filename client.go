@@ -1,7 +1,5 @@
 //client for simple REST server
 
-//TODO:add flags
-//	   report errors from server
 package main
 
 import (
@@ -24,7 +22,6 @@ type Dict struct {
 func getKey(key string) {
 	reqStr := "http://localhost:8080/v1/dict/" + key
 	req, err := http.NewRequest("GET", reqStr, nil)
-
 	if err != nil {
 		panic(err)
 	}
@@ -34,7 +31,6 @@ func getKey(key string) {
 
 	resp, err := http.DefaultClient.Do(req)
 	defer resp.Body.Close()
-
 	if err != nil {
 		panic(err)
 	}
@@ -90,13 +86,12 @@ func getAllKeys() {
 func deleteKey(key string) {
 	reqStr := "http://localhost:8080/v1/dict/delete/" + key
 	req, err := http.NewRequest("DELETE", reqStr, nil)
-
 	if err != nil {
 		panic(err)
 	}
+
 	resp, err := http.DefaultClient.Do(req)
 	defer resp.Body.Close()
-
 	if err != nil {
 		panic(err)
 	}
