@@ -13,18 +13,6 @@ import (
 	"net/http"
 )
 
-type Dict struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
-}
-
-type Pairs []Dict
-
-type restErr struct {
-	Code int    `json:"code"`
-	Text string `json:"text"`
-}
-
 var data = make(map[string]string) //Global map to hold data
 
 func GetDict(w http.ResponseWriter, req *http.Request) {
@@ -86,6 +74,9 @@ func UpdateDictKey(w http.ResponseWriter, req *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 		data[dict.Key] = dict.Value
+		if err := json.NewEncoder(w).Encode(Dict{Key: dict.Key, Value: dict.Value}); err != nil {
+			panic(err)
+		}
 		return
 	}
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")

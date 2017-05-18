@@ -1,5 +1,7 @@
 //client for simple REST server
 
+//TODO: reject invalid inputs
+
 package main
 
 import (
@@ -13,14 +15,11 @@ import (
 	"strings"
 )
 
-type Dict struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
-}
+const serverUrl = "http://localhost:8080"
 
 //Get a specific key based on provided key
 func getKey(key string) {
-	reqStr := "http://localhost:8080/v1/dict/" + key
+	reqStr := serverUrl + "/v1/dict/" + key
 	req, err := http.NewRequest("GET", reqStr, nil)
 	if err != nil {
 		panic(err)
@@ -31,15 +30,24 @@ func getKey(key string) {
 
 	resp, err := http.DefaultClient.Do(req)
 	defer resp.Body.Close()
+	fmt.Println("Status: " + resp.Status)
 	if err != nil {
 		panic(err)
 	}
 
-	var out Dict
-	json.NewDecoder(resp.Body).Decode(&out)
+	if resp.StatusCode == 200 {
+		var out Dict
+		json.NewDecoder(resp.Body).Decode(&out)
 
-	res, _ := json.Marshal(out)
-	fmt.Println(string(res))
+		res, _ := json.Marshal(out)
+		fmt.Println(string(res))
+	} else {
+		var out restErr
+		json.NewDecoder(resp.Body).Decode(&out)
+
+		res, _ := json.Marshal(out)
+		fmt.Println(string(res))
+	}
 }
 
 //add a key, value pair
@@ -52,7 +60,8 @@ func createKey(key, value string) {
 
 	body := bytes.NewReader(dataBytes)
 
-	req, err := http.NewRequest("POST", "http://localhost:8080/v1/dict/add/", body)
+	reqUrl := serverUrl + "/v1/dict/add/"
+	req, err := http.NewRequest("POST", reqUrl, body)
 	if err != nil {
 		panic(err)
 	}
@@ -64,18 +73,21 @@ func createKey(key, value string) {
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("Status: " + resp.Status)
 
 	return
 }
 
 //List all keys
 func getAllKeys() {
-	resp, err := http.Get("http://localhost:8080/v1/dict/")
+	reqUrl := serverUrl + "/v1/dict/"
+	resp, err := http.Get(reqUrl)
 	defer resp.Body.Close()
 	if err != nil {
 		panic(err)
 	}
 
+	fmt.Println("Status: " + resp.Status)
 	_, err = io.Copy(os.Stdout, resp.Body)
 	if err != nil {
 		panic(err)
@@ -84,8 +96,8 @@ func getAllKeys() {
 
 //Delete specific key
 func deleteKey(key string) {
-	reqStr := "http://localhost:8080/v1/dict/delete/" + key
-	req, err := http.NewRequest("DELETE", reqStr, nil)
+	reqUrl := serverUrl + "/v1/dict/delete/" + key
+	req, err := http.NewRequest("DELETE", reqUrl, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -95,12 +107,14 @@ func deleteKey(key string) {
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("Status: " + resp.Status)
 }
 
 func updateKey(key, value string) {
 	reqStr := "{\"key\":\"" + key + "\", \"value\":\"" + value + "\"}"
 	body := strings.NewReader(reqStr)
-	req, err := http.NewRequest("PUT", "http://localhost:8080/v1/dict/update/", body)
+	reqUrl := serverUrl + "/v1/dict/update/"
+	req, err := http.NewRequest("PUT", reqUrl, body)
 	if err != nil {
 		panic(err)
 	}
@@ -112,6 +126,14 @@ func updateKey(key, value string) {
 	defer resp.Body.Close()
 	if err != nil {
 		panic(err)
+	}
+	fmt.Println("Status: " + resp.Status)
+	if resp.StatusCode != 200 {
+		var out restErr
+		json.NewDecoder(resp.Body).Decode(&out)
+
+		res, _ := json.Marshal(out)
+		fmt.Println(string(res))
 	}
 }
 
