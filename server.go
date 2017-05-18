@@ -8,7 +8,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -19,32 +18,56 @@ type Dict struct {
 	Value string `json:"value"`
 }
 
+type Pairs []Dict
+
+type restErr struct {
+	Code int    `json:"code"`
+	Text string `json:"text"`
+}
+
 var data = make(map[string]string) //Global map to hold data
 
 func GetDict(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	json.NewEncoder(w).Encode(data) //add all keys
+	w.WriteHeader(http.StatusOK)
+	var pairs Pairs //data list
+	for k, v := range data {
+		pairs = append(pairs, Dict{Key: k, Value: v})
+	}
+	if err := json.NewEncoder(w).Encode(pairs); err != nil { //add all keys
+		panic(err)
+	}
 }
 
 func GetDictKey(w http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if val, ok := data[params["key"]]; ok { //check for key in dict and encode it
-		//TODO: simple dict
-		json.NewEncoder(w).Encode(Dict{Key: params["key"], Value: val})
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+		if err := json.NewEncoder(w).Encode(Dict{Key: params["key"], Value: val}); err != nil {
+			panic(err)
+		}
 		return
 	}
-	fmt.Fprintf(w, "Error, key not found\n")
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusNotFound)
+	if err := json.NewEncoder(w).Encode(restErr{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
+		panic(err)
+	}
 }
 
 func CreateDictKey(w http.ResponseWriter, req *http.Request) {
 	var dict Dict
 
 	if err := json.NewDecoder(req.Body).Decode(&dict); err != nil {
-		fmt.Fprintf(w, "Error\n") //Error if input format is wrong
-		return
+		panic(err) //Error if input format is wrong
 	}
 	data[dict.Key] = dict.Value //add key from input
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusCreated)
+	if err := json.NewEncoder(w).Encode(Dict{Key: dict.Key, Value: dict.Value}); err != nil {
+		panic(err)
+	}
 }
 
 func DeleteDictKey(w http.ResponseWriter, req *http.Request) {
@@ -56,14 +79,20 @@ func UpdateDictKey(w http.ResponseWriter, req *http.Request) {
 	var dict Dict
 
 	if err := json.NewDecoder(req.Body).Decode(&dict); err != nil {
-		fmt.Fprintf(w, "Error\n") //Error if input format is wrong
+		panic(err) //Error if input format is wrong
 		return
 	}
 	if _, ok := data[dict.Key]; ok { //check for key in dict and update it
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
 		data[dict.Key] = dict.Value
 		return
 	}
-	fmt.Fprintf(w, "Error, key not found\n")
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusNotFound)
+	if err := json.NewEncoder(w).Encode(restErr{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
+		panic(err)
+	}
 }
 
 func main() {
