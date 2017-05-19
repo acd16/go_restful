@@ -1,0 +1,55 @@
+rest/go_restful$ ab -n 10000 -c 2000 http://127.0.0.1:8080/v1/dict/
+This is ApacheBench, Version 2.3 <$Revision: 1604373 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 127.0.0.1 (be patient)
+Completed 1000 requests
+Completed 2000 requests
+Completed 3000 requests
+Completed 4000 requests
+Completed 5000 requests
+Completed 6000 requests
+Completed 7000 requests
+Completed 8000 requests
+Completed 9000 requests
+Completed 10000 requests
+Finished 10000 requests
+
+
+Server Software:        
+Server Hostname:        127.0.0.1
+Server Port:            8080
+
+Document Path:          /v1/dict/
+Document Length:        5561 bytes
+
+Concurrency Level:      2000
+Time taken for tests:   1.833 seconds
+Complete requests:      10000
+Failed requests:        0
+Total transferred:      56640000 bytes
+HTML transferred:       55610000 bytes
+Requests per second:    5456.23 [#/sec] (mean)
+Time per request:       366.553 [ms] (mean)
+Time per request:       0.183 [ms] (mean, across all concurrent requests)
+Transfer rate:          30179.78 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0   95 292.2      0    1005
+Processing:     4   42  93.5     18     807
+Waiting:        3   42  93.5     18     807
+Total:          9  137 365.3     18    1811
+
+Percentage of the requests served within a certain time (ms)
+  50%     18
+  66%     19
+  75%     21
+  80%     23
+  90%     76
+  95%   1229
+  98%   1420
+  99%   1429
+ 100%   1811 (longest request)
+
